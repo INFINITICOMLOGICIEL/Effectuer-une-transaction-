@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfert d'Argent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .balance {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .history {
+            margin-top: 20px;
+        }
+        .transaction {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Mon Compte</h2>
+    <div class="balance">Solde : <span id="balance">975000000</span> FCFA</div>
+
+    <h2>Easy Transaction</h2>
+    <form id="transferForm">
+        <div class="form-group">
+            <label for="transferType">Type de Transfert :</label>
+            <select id="transferType" name="transferType" required>
+                <option value="iban">IBAN</option>
+                <option value="bank">Virement Bancaire</option>
+                <option value="mobileMoney">Mobile Money</option>
+                <option value="ria">RIA</option>
+                <option value="westernUnion">Western Union</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="firstName">Prénom :</label>
+            <input type="text" id="firstName" name="firstName" required>
+        </div>
+        <div class="form-group">
+            <label for="lastName">Nom :</label>
+            <input type="text" id="lastName" name="lastName" required>
+        </div>
+        <div class="form-group">
+            <label for="phoneNumber">coordonnées :</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" required>
+        </div>
+        <div class="form-group">
+            <label for="country">Pays :</label>
+            <select id="country" name="country" required>
+                <option value="senegal">Sénégal</option>
+                <option value="coteIvoire">Côte d'Ivoire</option>
+                <option value="mali">Mali</option>
+                <option value="burkinaFaso">Burkina Faso</option>
+                <option value="niger">Niger</option>
+                <option value="benin">Bénin</option>
+                <option value="togo">Togo</option>
+                <option value="ghana">Ghana</option>
+                <option value="nigeria">Nigéria</option>
+                <!-- Ajoutez tous les autres pays de l'Afrique ici -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="amount">Montant :</label>
+            <input type="number" id="amount" name="amount" required>
+        </div>
+        <button type="submit">Envoyer</button>
+    </form>
+
+    <div class="history">
+        <h3>Historique des Transactions</h3>
+        <div id="transactionHistory"></div>
+    </div>
+</div>
+
+<script>
+    let balance = 975000000;
+    const balanceElement = document.getElementById('balance');
+    const transactionHistoryElement = document.getElementById('transactionHistory');
+
+    document.getElementById('transferForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const transferType = document.getElementById('transferType').value;
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const country = document.getElementById('country').value;
+        const amount = parseInt(document.getElementById('amount').value);
+
+        if (amount > balance) {
+            alert('Solde insuffisant !');
+            return;
+        }
+
+        // Désactiver le bouton pour simuler un temps de traitement
+        const submitButton = e.target.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Traitement...';
+
+        // Simuler un délai avant la validation de la transaction
+        setTimeout(() => {
+            balance -= amount;
+            balanceElement.textContent = balance;
+
+            let transferTypeText = '';
+            switch (transferType) {
+                case 'iban':
+                    transferTypeText = 'IBAN';
+                    break;
+                case 'bank':
+                    transferTypeText = 'Virement Bancaire';
+                    break;
+                case 'mobileMoney':
+                    transferTypeText = 'Mobile Money';
+                    break;
+                case 'ria':
+                    transferTypeText = 'RIA';
+                    break;
+                case 'westernUnion':
+                    transferTypeText = 'Western Union';
+                    break;
+                default:
+                    transferTypeText = 'Transfert';
+            }
+
+            const transaction = document.createElement('div');
+            transaction.classList.add('transaction');
+            transaction.innerHTML = `<strong>Type de Transfert:</strong> ${transferTypeText} <br> <strong>Destinataire:</strong> ${firstName} ${lastName} <br> <strong>Numéro:</strong> ${phoneNumber} <br> <strong>Pays:</strong> ${country} <br> <strong>Montant:</strong> ${amount} FCFA`;
+
+            transactionHistoryElement.prepend(transaction);
+
+            alert('Transfert effectué avec succès!');
+
+            // Réinitialiser le formulaire
+            e.target.reset();
+            
+            // Réactiver le bouton
+            submitButton.disabled = false;
+            submitButton.textContent = 'Envoyer';
+        }, 2000); // délai de 2 secondes pour simuler le traitement
+    });
+</script>
+</body>
+</html>
